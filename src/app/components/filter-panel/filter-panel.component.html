@@ -1,1 +1,42 @@
-<section class="filters"><div class="filter-head"><h2><span class="funnel">▽</span> Filter Wounds</h2><button class="primary" (click)="newAssessment.emit()">+ New Wound Assessment</button></div><div class="chips" aria-label="Quick filters"><button *ngFor="let chip of chips" [class.selected]="filters.chip===chip" [class.resolved]="chip==='Resolved Wounds'" (click)="selectChip(chip)">{{chip}}</button><button class="clear-chip" (click)="clearAll()">Clear Filters</button></div><div class="divider"></div><div class="advanced"><label>Date Range:</label><input type="date" [ngModel]="filters.fromDate" (ngModelChange)="update('fromDate',$event)"><span>to</span><input type="date" [ngModel]="filters.toDate" (ngModelChange)="update('toDate',$event)"><select [ngModel]="filters.dateField" (ngModelChange)="update('dateField',$event)"><option value="onsetDate">Onset Date</option><option value="lastAssessment">Last Assessment</option><option value="nextAssessment">Next Due Date</option></select><button class="link" (click)="clearDates()">Clear Dates</button><i></i><label>Resident:</label><input class="search" placeholder="Search by name..." [ngModel]="filters.resident" (ngModelChange)="update('resident',$event)"><button class="link" (click)="update('resident','')">Clear</button></div></section>
+<section class="filters">
+  <div class="filter-head">
+    <h2><span class="funnel">▽</span> Filter Wounds</h2>
+    <button class="primary" (click)="newAssessment.emit()">+ New Wound Assessment</button>
+  </div>
+
+  <div class="chips" aria-label="Quick filters">
+    <button
+      *ngFor="let chip of chips"
+      [class.selected]="filters.chip === chip"
+      [class.resolved]="chip === 'Resolved Wounds'"
+      (click)="selectChip(chip)"
+    >
+      {{ chip }}
+    </button>
+    <button class="clear-chip" (click)="clearAll()">Clear Filters</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="advanced">
+    <label>Date Range:</label>
+    <input type="date" [ngModel]="filters.fromDate" (ngModelChange)="update('fromDate', $event)" />
+    <span>to</span>
+    <input type="date" [ngModel]="filters.toDate" (ngModelChange)="update('toDate', $event)" />
+    <select [ngModel]="filters.dateField" (ngModelChange)="update('dateField', $event)">
+      <option value="onsetDate">Onset Date</option>
+      <option value="lastAssessment">Last Assessment</option>
+      <option value="nextAssessment">Next Due Date</option>
+    </select>
+    <button class="link" (click)="clearDates()">Clear Dates</button>
+    <i></i>
+    <label>Resident:</label>
+    <input
+      class="search"
+      placeholder="Search by name..."
+      [ngModel]="filters.resident"
+      (ngModelChange)="update('resident', $event)"
+    />
+    <button class="link" (click)="update('resident', '')">Clear</button>
+  </div>
+</section>

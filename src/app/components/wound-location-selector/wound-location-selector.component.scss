@@ -1,0 +1,52 @@
+.location-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.location-chip {
+  border: 1px solid #c9d7d7;
+  background: #ffffff;
+  color: #2f4b58;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.location-chip:hover {
+  border-color: #4aa6ab;
+  background: #edf9fa;
+}
+
+.location-chip.selected {
+  background: #dff6f3;
+  border-color: #0a98a8;
+  color: #0a4552;
+  box-shadow: inset 0 0 0 1px rgba(10, 152, 168, 0.25);
+}
+
+.custom-location {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.custom-location label {
+  font-weight: 600;
+  color: #2e424f;
+}
+
+.custom-location input {
+  border: 1px solid #cbd8d9;
+  border-radius: 0.4rem;
+  padding: 0.7rem 0.8rem;
+  background: #fff;
+}

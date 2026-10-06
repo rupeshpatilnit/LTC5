@@ -1,0 +1,41 @@
+<main class="dashboard">
+  <app-header (newAssessment)="goToNewAssessment()"></app-header>
+
+  <section class="stats">
+    <app-stat-card
+      [value]="total()"
+      title="Total Active Wounds"
+      [detail]="'Across ' + residents() + ' residents'"
+      [active]="true"
+    ></app-stat-card>
+    <app-stat-card
+      [value]="pressure()"
+      title="Pressure Ulcers (CMS 802)"
+      detail="Facility-acquired and POA"
+    ></app-stat-card>
+    <app-stat-card
+      [value]="infections()"
+      title="Wound Infections (CMS 802)"
+      detail="Suspected or culture pending"
+    ></app-stat-card>
+    <app-stat-card
+      [value]="alerts()"
+      title="Active Alerts"
+      detail="Critical and high priority"
+    ></app-stat-card>
+  </section>
+
+  <app-filter-panel
+    [filters]="filters()"
+    (filtersChange)="filters.set($event)"
+    (newAssessment)="goToNewAssessment()"
+  ></app-filter-panel>
+
+  <app-wound-table
+    [wounds]="filtered()"
+    [resolved]="filters().chip === 'Resolved Wounds'"
+    (view)="showToast('Selected ' + $event.resident + ' (' + $event.id + ').')"
+  ></app-wound-table>
+
+  <div class="toast" *ngIf="toast()">{{ toast() }}</div>
+</main>

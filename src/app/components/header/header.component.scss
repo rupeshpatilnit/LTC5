@@ -1,1 +1,33 @@
-.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:2.7rem}h1{margin:0;color:#172b39;font-size:2rem;font-weight:650}p{margin:.35rem 0 0;color:#5f6f78}.primary{display:none}@media(max-width:720px){.page-header{margin-bottom:1.5rem}h1{font-size:1.55rem}}
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2.7rem;
+}
+
+h1 {
+  margin: 0;
+  color: #172b39;
+  font-size: 2rem;
+  font-weight: 650;
+}
+
+p {
+  margin: 0.35rem 0 0;
+  color: #5f6f78;
+}
+
+.primary {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.55rem;
+  }
+}
