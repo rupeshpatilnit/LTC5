@@ -1,0 +1,69 @@
+<div class="body-diagram-shell">
+  <div class="view-toggle" role="tablist" aria-label="Body view">
+    <button
+      type="button"
+      class="view-button"
+      [class.active]="activeView === 'front'"
+      (click)="setView('front')"
+      [attr.aria-pressed]="activeView === 'front'"
+    >
+      Front View
+    </button>
+    <button
+      type="button"
+      class="view-button"
+      [class.active]="activeView === 'back'"
+      (click)="setView('back')"
+      [attr.aria-pressed]="activeView === 'back'"
+    >
+      Back View
+    </button>
+  </div>
+
+  <div class="diagram-canvas" [attr.aria-label]="activeView + ' body diagram'">
+    <!-- ═══════════════════════════════════════════════════════
+         FRONT VIEW: Loaded from assets/data/male-front-body.svg
+         ═══════════════════════════════════════════════════════ -->
+    <div
+      *ngIf="activeView === 'front'"
+      #frontSvgContainer
+      class="front-svg-container"
+      (click)="onSvgClick($event)"
+      (keydown)="onSvgKeydown($event)"
+      (bodyRegionSelected)="onSvgBodyRegionSelected($event)"
+      [innerHTML]="sanitizedFrontSvg"
+    ></div>
+
+    <div *ngIf="activeView === 'front' && !frontSvgLoaded && !frontSvgError" class="diagram-loading">
+      <span class="loading-spinner"></span>
+      <span>Loading front body diagram...</span>
+    </div>
+
+    <div *ngIf="activeView === 'front' && frontSvgError" class="diagram-error">
+      <span>Failed to load front body diagram from assets/data.</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         BACK VIEW: Loaded from female-back-body.svg or male-back-body.svg
+         ═══════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeView === 'back'">
+      <div
+        #backSvgContainer
+        class="back-svg-container"
+        (click)="onSvgClick($event)"
+        (keydown)="onSvgKeydown($event)"
+        (bodyRegionSelected)="onSvgBodyRegionSelected($event)"
+        [innerHTML]="sanitizedBackSvg"
+      ></div>
+
+      <div *ngIf="!backSvgLoaded && !backSvgError" class="diagram-loading">
+        <span class="loading-spinner"></span>
+        <span>Loading back body diagram...</span>
+      </div>
+
+      <div *ngIf="backSvgError" class="diagram-error">
+        <span>Failed to load back body diagram from assets/data.</span>
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<div class="location-selector">
+  <div class="chip-list" aria-label="Wound location choices">
+    <button
+      type="button"
+      class="location-chip"
+      *ngFor="let region of visibleRegions"
+      [class.selected]="selectedRegionId === region.id"
+      [attr.aria-pressed]="selectedRegionId === region.id"
+      (click)="selectLocation(region)"
+    >
+      {{ region.displayName }}
+    </button>
+
+    <button
+      type="button"
+      class="location-chip other-chip"
+      [class.selected]="selectedRegionId === otherLocationId"
+      [attr.aria-pressed]="selectedRegionId === otherLocationId"
+      (click)="selectOther()"
+    >
+      Other
+    </button>
+  </div>
+
+  <div class="custom-location" *ngIf="selectedRegionId === otherLocationId">
+    <label for="custom-location">Custom location</label>
+    <input
+      id="custom-location"
+      type="text"
+      [ngModel]="customLocation"
+      (ngModelChange)="customLocationChange.emit($event)"
+      placeholder="Enter a custom wound location"
+    />
+  </div>
+</div>

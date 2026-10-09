@@ -1,0 +1,457 @@
+<div class="view-resident-page" *ngIf="resident">
+  <!-- ═════════════════════════════════════════════════════════════
+       HEADER: Resident Profile & Orders Card (Unified)
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="resident-hero-card">
+    <div class="resident-header-row">
+      <div class="resident-profile-left">
+        <div class="avatar-box">
+          <img
+            *ngIf="getAvatarSrc()"
+            [src]="getAvatarSrc()"
+            [alt]="resident.name"
+            class="avatar-img"
+            (error)="onAvatarError($event)"
+          />
+          <div class="avatar-placeholder" *ngIf="!getAvatarSrc()">
+            <span>{{ resident.name.charAt(0) }}</span>
+          </div>
+        </div>
+
+        <div class="resident-info-content">
+          <h1 class="resident-name">{{ resident.name }}</h1>
+
+          <div class="resident-meta-row">
+            <div class="meta-item">
+              <span class="meta-label">Room</span>
+              <span class="meta-val">{{ resident.room }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Age</span>
+              <span class="meta-val">{{ resident.age }} years</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Gender</span>
+              <span class="meta-val">{{ resident.gender }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Admission Date</span>
+              <span class="meta-val">{{ resident.admissionDate }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Active Wounds</span>
+              <span class="meta-val font-semibold">{{ resident.activeWounds.length }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Resolved Wounds</span>
+              <span class="meta-val font-semibold">{{ resident.resolvedWounds.length }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resident-header-actions">
+        <button type="button" class="btn-outline-back" (click)="goToDashboard()">
+          ← Back to Dashboard
+        </button>
+        <button type="button" class="btn-primary-new" (click)="goToNewAssessment()">
+          + New Wound Assessment
+        </button>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════════
+         PHYSICIAN ORDERS (GENERAL / RESIDENT-LEVEL)
+         ═════════════════════════════════════════════════════════════ -->
+    <div class="physician-orders-box">
+      <div class="orders-header-row">
+        <div class="orders-title-group">
+          <span class="orders-icon">📋</span>
+          <strong class="orders-title">Physician Orders</strong>
+          <span class="orders-subtitle">— These orders support overall wound prevention and healing but are not specific to a single wound.</span>
+        </div>
+        <button type="button" class="btn-link-order" (click)="openLinkOrder()">
+          + Link Order
+        </button>
+      </div>
+
+      <div class="orders-list">
+        <div class="order-badge-row" *ngFor="let order of resident.physicianOrders; let idx = index">
+          <div class="order-info-group">
+            <span class="order-category-tag">{{ order.category }}</span>
+            <span class="order-text">{{ order.orderText }}</span>
+          </div>
+          <button
+            type="button"
+            class="btn-order-delete"
+            (click)="removeOrder(idx, $event)"
+            title="Remove order"
+            aria-label="Remove order"
+          >
+            🗑
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       ACTIVE WOUNDS SECTION (ACCORDION)
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="wounds-section">
+    <div class="section-accordion-bar" (click)="toggleActiveWounds()">
+      <span class="accordion-arrow">{{ activeWoundsExpanded ? '▼' : '▶' }}</span>
+      <h2 class="section-title">Active Wounds ({{ resident.activeWounds.length }})</h2>
+    </div>
+
+    <div class="wounds-grid" *ngIf="activeWoundsExpanded">
+      <article
+        class="wound-card"
+        *ngFor="let w of resident.activeWounds"
+        [ngClass]="'status-border-' + w.status.toLowerCase()"
+      >
+        <!-- Card Header -->
+        <div class="wound-card-header">
+          <div class="wound-title-row">
+            <span class="wound-code">{{ w.id }}</span>
+            <h3 class="wound-location">{{ w.location }}</h3>
+            <span class="wound-type-stage">{{ w.type }} · {{ w.stage }}</span>
+          </div>
+        </div>
+
+        <!-- Details Grid (2 Columns) -->
+        <div class="wound-details-grid">
+          <div class="col-left">
+            <div class="field-group">
+              <span class="field-label">Status</span>
+              <div>
+                <span class="status-pill" [ngClass]="'pill-' + w.status.toLowerCase()">
+                  {{ w.status }}
+                </span>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">Last Assessment</span>
+              <span class="field-val">{{ w.lastAssessment }}</span>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">Size (L×W×D cm)</span>
+              <span class="field-val font-mono">{{ w.size }}</span>
+            </div>
+          </div>
+
+          <div class="col-right">
+            <div class="field-group">
+              <span class="field-label">Onset Date</span>
+              <span class="field-val">{{ w.onsetDate }}</span>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">Next Due</span>
+              <span class="field-val">{{ w.nextDue }}</span>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">Origin</span>
+              <span class="field-val">{{ w.origin }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUSH Score Trend (Last 5 Weeks) -->
+        <div class="push-trend-card">
+          <div class="push-trend-header">
+            <span class="push-trend-title">PUSH Score Trend (Last 5 Weeks)</span>
+          </div>
+
+          <!-- Step Bars Chart -->
+          <div class="push-bars-container">
+            <div class="push-bar-column" *ngFor="let pt of w.pushTrend">
+              <span class="bar-value-label">{{ pt.score }}</span>
+              <div class="bar-track">
+                <div class="bar-fill" [style.height.%]="getPushBarHeight(pt.score)"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Score & Range Summary -->
+          <div class="push-summary-row">
+            <div class="push-current-group">
+              <span class="push-current-label">Current:</span>
+              <span class="push-current-score">{{ w.currentPushScore }}</span>
+            </div>
+            <div class="push-range-note">
+              Range: 0 - 17 (Lower is better)
+            </div>
+            <div class="push-trend-state">
+              <span class="trend-badge" [ngClass]="'trend-' + w.pushTrendDescription.toLowerCase()">
+                {{ w.pushTrendDescription }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Linked Physician Orders -->
+        <div class="linked-orders-block" *ngIf="w.linkedOrders && w.linkedOrders.length">
+          <span class="linked-orders-title">Linked Physician Orders ({{ w.linkedOrders.length }})</span>
+          <div class="linked-orders-box">
+            <div class="linked-order-item" *ngFor="let ord of w.linkedOrders">
+              • {{ ord }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Notes (Collapsible) -->
+        <div class="progress-notes-section">
+          <div class="notes-toggle-row">
+            <button
+              type="button"
+              class="notes-toggle-btn"
+              (click)="toggleProgressNotes(w.id)"
+            >
+              <span class="notes-arrow">{{ isNotesExpanded(w.id) ? '▼' : '▶' }}</span>
+              <span>Progress Notes ({{ w.progressNotes.length }})</span>
+            </button>
+            <button
+              type="button"
+              class="btn-add-note"
+              (click)="openAddNote(w, $event)"
+            >
+              + Add Note
+            </button>
+          </div>
+
+          <!-- Expanded Notes Content -->
+          <div class="notes-expanded-list" *ngIf="isNotesExpanded(w.id)">
+            <div class="note-card-item" *ngFor="let n of w.progressNotes">
+              <div class="note-meta-line">
+                <strong class="note-author">{{ n.author }}</strong>
+                <span class="note-date">{{ n.date }}</span>
+              </div>
+              <p class="note-body">{{ n.note }}</p>
+            </div>
+            <div class="no-notes" *ngIf="!w.progressNotes.length">
+              No progress notes recorded yet.
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="wound-card-actions">
+          <button type="button" class="btn-card-assess" (click)="goToNewAssessment(w)">
+            Assess
+          </button>
+          <button type="button" class="btn-card-secondary" (click)="openPhotos(w)">
+            Photos ({{ w.photoCount }})
+          </button>
+          <button type="button" class="btn-card-secondary" (click)="openHistory(w)">
+            History
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       RESOLVED WOUNDS SECTION (ACCORDION)
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="wounds-section mt-4" *ngIf="resident.resolvedWounds.length">
+    <div class="section-accordion-bar resolved-bar" (click)="toggleResolvedWounds()">
+      <span class="accordion-arrow">{{ resolvedWoundsExpanded ? '▼' : '▶' }}</span>
+      <h2 class="section-title">Resolved Wounds ({{ resident.resolvedWounds.length }})</h2>
+    </div>
+
+    <div class="wounds-grid" *ngIf="resolvedWoundsExpanded">
+      <article
+        class="wound-card status-border-resolved"
+        *ngFor="let rw of resident.resolvedWounds"
+      >
+        <div class="wound-card-header">
+          <div class="wound-title-row">
+            <span class="wound-code">{{ rw.id }}</span>
+            <h3 class="wound-location">{{ rw.location }}</h3>
+            <span class="wound-type-stage">{{ rw.type }} · {{ rw.stage }}</span>
+          </div>
+        </div>
+
+        <div class="wound-details-grid">
+          <div class="col-left">
+            <div class="field-group">
+              <span class="field-label">Status</span>
+              <div>
+                <span class="status-pill pill-resolved">Resolved</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Resolved Date</span>
+              <span class="field-val font-semibold text-green-700">{{ rw.resolvedDate }}</span>
+            </div>
+          </div>
+          <div class="col-right">
+            <div class="field-group">
+              <span class="field-label">Days to Closure</span>
+              <span class="field-val font-semibold">{{ rw.daysToClosure }} days</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Origin</span>
+              <span class="field-val">{{ rw.origin }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="wound-card-actions">
+          <button type="button" class="btn-card-secondary" (click)="openPhotos(rw)">
+            Photos ({{ rw.photoCount }})
+          </button>
+          <button type="button" class="btn-card-secondary" (click)="openHistory(rw)">
+            Closure History
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       MODAL: ADD PROGRESS NOTE
+       ═════════════════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" *ngIf="isAddNoteOpen" (click)="closeAddNote()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h3 class="modal-title">Add Clinical Progress Note</h3>
+        <button type="button" class="modal-close" (click)="closeAddNote()">✕</button>
+      </header>
+      <div class="modal-body">
+        <p class="modal-subtitle">
+          Wound: <strong>{{ selectedWoundForNote?.id }} — {{ selectedWoundForNote?.location }}</strong>
+        </p>
+        <label for="newNote" class="form-label">Note Content</label>
+        <textarea
+          id="newNote"
+          rows="4"
+          class="form-textarea"
+          [(ngModel)]="newNoteText"
+          placeholder="Enter detailed wound observation, exudate, periwound condition, treatment response..."
+        ></textarea>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-modal-cancel" (click)="closeAddNote()">Cancel</button>
+        <button type="button" class="btn-modal-submit" (click)="saveNote()" [disabled]="!newNoteText.trim()">
+          Save Progress Note
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       MODAL: LINK PHYSICIAN ORDER
+       ═════════════════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" *ngIf="isLinkOrderOpen" (click)="closeLinkOrder()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h3 class="modal-title">Link General Physician Order</h3>
+        <button type="button" class="modal-close" (click)="closeLinkOrder()">✕</button>
+      </header>
+      <div class="modal-body">
+        <div class="form-group mb-3">
+          <label for="orderCategory" class="form-label">Category</label>
+          <select id="orderCategory" class="form-select" [(ngModel)]="newOrderCategory">
+            <option value="POSITIONING">POSITIONING</option>
+            <option value="SUPPORT SURFACE">SUPPORT SURFACE</option>
+            <option value="NUTRITION">NUTRITION & HYDRATION</option>
+            <option value="SKIN PROTECTION">SKIN PROTECTION</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="orderDesc" class="form-label">Order Details</label>
+          <textarea
+            id="orderDesc"
+            rows="3"
+            class="form-textarea"
+            [(ngModel)]="newOrderText"
+            placeholder="e.g. Turn and reposition every 2 hours while in bed"
+          ></textarea>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-modal-cancel" (click)="closeLinkOrder()">Cancel</button>
+        <button type="button" class="btn-modal-submit" (click)="saveOrder()" [disabled]="!newOrderText.trim()">
+          Link Order
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       MODAL: PHOTOS GALLERY
+       ═════════════════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" *ngIf="isPhotosOpen" (click)="closePhotos()">
+    <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h3 class="modal-title">Wound Photos — {{ selectedWoundForPhotos?.id }} ({{ selectedWoundForPhotos?.location }})</h3>
+        <button type="button" class="modal-close" (click)="closePhotos()">✕</button>
+      </header>
+      <div class="modal-body">
+        <div class="photos-grid">
+          <div class="photo-card" *ngFor="let i of [1, 2, 3]">
+            <div class="photo-img-box">
+              <span class="photo-icon">📷</span>
+              <span class="photo-tag">Assessment #{{ i }}</span>
+            </div>
+            <div class="photo-meta">
+              <span class="photo-date">Assessment {{ i }} — Stage {{ selectedWoundForPhotos?.stage }}</span>
+              <span class="photo-dim">Dimension: {{ selectedWoundForPhotos?.size }} cm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-modal-cancel" (click)="closePhotos()">Close</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       MODAL: HISTORY TIMELINE
+       ═════════════════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" *ngIf="isHistoryOpen" (click)="closeHistory()">
+    <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h3 class="modal-title">Wound Assessment History — {{ selectedWoundForHistory?.id }}</h3>
+        <button type="button" class="modal-close" (click)="closeHistory()">✕</button>
+      </header>
+      <div class="modal-body">
+        <div class="history-timeline">
+          <div class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <strong>Jun 21, 2024 — Routine Weekly Assessment</strong>
+              <p>Status: {{ selectedWoundForHistory?.status }} | PUSH Score: {{ selectedWoundForHistory?.currentPushScore }} | Size: {{ selectedWoundForHistory?.size }} cm</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <strong>Jun 14, 2024 — Follow-up Assessment</strong>
+              <p>Status: Improving | Dressing intact | Mild serosanguinous exudate</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <strong>{{ selectedWoundForHistory?.onsetDate }} — Initial Assessment (Onset)</strong>
+              <p>Initial discovery and staging. Origin: {{ selectedWoundForHistory?.origin }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-modal-cancel" (click)="closeHistory()">Close</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-popup" *ngIf="toastMessage">{{ toastMessage }}</div>
+</div>

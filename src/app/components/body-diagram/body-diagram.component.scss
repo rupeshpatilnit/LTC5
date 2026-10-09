@@ -1,0 +1,158 @@
+.body-diagram-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* ── View-toggle pill ──────────────────────────────── */
+.view-toggle {
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background: #f2f5f5;
+  border: 1px solid #d6e0e1;
+  border-radius: 0.5rem;
+  width: fit-content;
+}
+
+.view-button {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #35515e;
+  padding: 0.55rem 1rem;
+  border-radius: 0.35rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-button.active {
+  background: #0b8ea2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* ── Canvas wrapper ────────────────────────────────── */
+.diagram-canvas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 480px;
+  background: #ffffff;
+  border: 1px solid #dce7e8;
+  border-radius: 0.5rem;
+  padding: 1rem 0.75rem 0.75rem;
+  position: relative;
+}
+
+/* ── Front & Back SVG Containers (male-front-body.svg & male-back-body.svg) ── */
+.front-svg-container,
+.back-svg-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  ::ng-deep image {
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  ::ng-deep .region {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  ::ng-deep .hit {
+    fill: #fff;
+    fill-opacity: 0.001;
+    stroke: transparent;
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+    transition: fill-opacity 0.2s ease, fill 0.2s ease, stroke 0.2s ease;
+  }
+
+  ::ng-deep .region:hover .hit {
+    fill: #57bfcc;
+    fill-opacity: 0.22;
+    stroke: #12899a;
+    stroke-width: 1.5;
+  }
+
+  ::ng-deep .region.selected .hit {
+    fill: #39b1c0;
+    fill-opacity: 0.42;
+    stroke: #067487;
+    stroke-width: 2.2;
+    filter: drop-shadow(0 0 4px rgba(18, 137, 154, 0.4));
+  }
+
+  ::ng-deep .region:focus {
+    outline: none;
+  }
+
+  ::ng-deep .region:focus .hit {
+    stroke: #003f49;
+    stroke-width: 2.5;
+    stroke-dasharray: 4 2;
+  }
+}
+
+.front-svg-container {
+  ::ng-deep svg {
+    width: min(240px, 100%);
+    height: auto;
+    max-height: 480px;
+    overflow: visible;
+    display: block;
+  }
+}
+
+.back-svg-container {
+  ::ng-deep svg {
+    width: min(308px, 100%);
+    height: auto;
+    max-height: 480px;
+    overflow: visible;
+    display: block;
+  }
+
+  ::ng-deep svg#female-back-body-precise {
+    width: min(240px, 100%);
+  }
+}
+
+/* ── Loading and error states ──────────────────────── */
+.diagram-loading,
+.diagram-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 300px;
+  color: #55727d;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.diagram-error {
+  color: #c0392b;
+}
+
+.loading-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #dce7e8;
+  border-top-color: #0b8ea2;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

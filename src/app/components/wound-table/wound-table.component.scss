@@ -1,0 +1,102 @@
+.table-wrap {
+  margin-top: 0.8rem;
+  background: #fff;
+  border: 1px solid #dfe4e6;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1080px;
+  color: #263943;
+  font-size: 0.8rem;
+}
+
+thead {
+  background: #dce8eb;
+}
+
+th {
+  text-align: left;
+  padding: 0.9rem 0.75rem;
+  font-size: 0.91rem;
+  color: #314d58;
+}
+
+td {
+  padding: 0.8rem 0.75rem;
+  border-bottom: 1px solid #e1e5e6;
+  vertical-align: middle;
+}
+
+td strong,
+td small {
+  display: block;
+}
+
+td small {
+  margin-top: 0.2rem;
+  color: #5f7078;
+  font-size: 0.71rem;
+}
+
+.id {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: #07869a;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.badge,
+.origin {
+  display: inline-block;
+  padding: 0.28rem 0.52rem;
+  font-size: 0.69rem;
+}
+
+.badge.worsening { background: #ffe5df; }
+.badge.improving { background: #d4ead8; }
+.badge.unchanged { background: #dde5e6; }
+.badge.new       { background: #dcecf5; }
+.badge.resolved  { background: #e4e9f6; }
+
+.origin {
+  background: #e2ecee;
+}
+
+.origin.poa {
+  background: #ffe3ca;
+  color: #9b531c;
+}
+
+.alert {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 0.25rem;
+  border-radius: 50%;
+  background: #f4be50;
+  color: #644300;
+  font-weight: 700;
+}
+
+.action {
+  border: 1px solid #d6dee1;
+  background: #fff;
+  color: #087f90;
+  padding: 0.55rem 0.9rem;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: #687880;
+}
