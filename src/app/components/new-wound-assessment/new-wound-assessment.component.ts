@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BodyDiagramComponent } from '../body-diagram/body-diagram.component';
 import { WoundLocationSelectorComponent } from '../wound-location-selector/wound-location-selector.component';
 import { BODY_REGIONS, OTHER_LOCATION_ID } from '../../config/body-regions';
@@ -16,10 +17,59 @@ import { WoundAssessmentService } from '../../services/wound-assessment.service'
   templateUrl: './new-wound-assessment.component.html',
   styleUrl: './new-wound-assessment.component.scss'
 })
-export class NewWoundAssessmentComponent {
+export class NewWoundAssessmentComponent implements OnInit {
   private fb = inject(FormBuilder);
   private assessmentService = inject(WoundAssessmentService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
+
+  ngOnInit(): void {
+    const initialResident = this.form.get('residentId')?.value;
+    if (initialResident === 'R-1002') {
+      this.form.patchValue({ diagramVariant: 'female' });
+    }
+
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        if (params['residentId']) {
+          const resId = params['residentId'];
+          const variant = resId === 'R-1002' ? 'female' : 'male';
+          this.form.patchValue({
+            residentId: resId,
+            diagramVariant: variant
+          });
+        }
+        if (params['location']) {
+          const locName = params['location'];
+          const matchedRegion = this.bodyRegions.find(
+            (r) =>
+              r.displayName.toLowerCase() === locName.toLowerCase() ||
+              r.formValue.toLowerCase() === locName.toLowerCase()
+          );
+          if (matchedRegion) {
+            this.form.patchValue({
+              woundLocationId: matchedRegion.id,
+              woundLocation: matchedRegion.displayName,
+              bodyView: matchedRegion.view === 'back' ? 'back' : 'front'
+            });
+          }
+        }
+      });
+
+    this.form.get('residentId')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((residentId) => {
+        const variant = residentId === 'R-1002' ? 'female' : 'male';
+        this.form.patchValue({
+          diagramVariant: variant,
+          woundLocationId: null,
+          woundLocation: '',
+          bodyView: 'front'
+        });
+      });
+  }
 
   goToDashboard(): void {
     this.router.navigate(['/wound-assessment/dashboard']);

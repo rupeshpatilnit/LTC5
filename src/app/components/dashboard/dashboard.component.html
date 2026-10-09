@@ -34,7 +34,7 @@
   <app-wound-table
     [wounds]="filtered()"
     [resolved]="filters().chip === 'Resolved Wounds'"
-    (view)="showToast('Selected ' + $event.resident + ' (' + $event.id + ').')"
+    (view)="onViewResident($event)"
   ></app-wound-table>
 
   <div class="toast" *ngIf="toast()">{{ toast() }}</div>

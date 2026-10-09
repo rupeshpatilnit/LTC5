@@ -36,58 +36,140 @@ export class BodyDiagramComponent implements OnInit, OnChanges {
   @Output() selectionCleared = new EventEmitter<void>();
 
   @ViewChild('frontSvgContainer') frontSvgContainer?: ElementRef<HTMLElement>;
+  @ViewChild('backSvgContainer') backSvgContainer?: ElementRef<HTMLElement>;
 
   readonly bodyRegions = BODY_REGIONS;
 
+  get isFemale(): boolean {
+    return this.diagramVariant?.some((v) => v.toLowerCase() === 'female') ?? false;
+  }
+
+  private currentFrontUrl: string | null = null;
+  private currentBackUrl: string | null = null;
+
   sanitizedFrontSvg: SafeHtml | null = null;
   frontSvgLoaded = false;
+  frontSvgLoading = false;
   frontSvgError = false;
+
+  sanitizedBackSvg: SafeHtml | null = null;
+  backSvgLoaded = false;
+  backSvgLoading = false;
+  backSvgError = false;
 
   private http = inject(HttpClient);
   private sanitizer = inject(DomSanitizer);
   private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.loadFrontSvg();
+    if (this.activeView === 'front') {
+      this.loadFrontSvg();
+    } else if (this.activeView === 'back') {
+      this.loadBackSvg();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['selectedRegionId'] || changes['activeView']) {
+    if (changes['diagramVariant']) {
+      if (this.activeView === 'front') {
+        this.loadFrontSvg();
+      } else if (this.activeView === 'back') {
+        this.loadBackSvg();
+      }
+    }
+    if (changes['activeView']) {
+      if (this.activeView === 'back') {
+        this.loadBackSvg();
+      } else if (this.activeView === 'front') {
+        this.loadFrontSvg();
+      }
+    }
+    if (changes['selectedRegionId'] || changes['activeView'] || changes['diagramVariant']) {
       setTimeout(() => this.syncSelectedRegion(), 0);
     }
   }
 
   loadFrontSvg(): void {
+    const targetUrl = this.isFemale ? 'assets/data/female-front-body.svg' : 'assets/data/male-front-body.svg';
+    if (this.frontSvgLoaded && this.currentFrontUrl === targetUrl) {
+      return;
+    }
+    this.currentFrontUrl = targetUrl;
+    this.frontSvgLoading = true;
+    this.frontSvgError = false;
+    this.frontSvgLoaded = false;
+    this.sanitizedFrontSvg = null;
+
     this.http
-      .get('assets/data/male-front-body.svg', { responseType: 'text' })
+      .get(targetUrl, { responseType: 'text' })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (svgText) => {
           this.sanitizedFrontSvg = this.sanitizer.bypassSecurityTrustHtml(svgText);
           this.frontSvgLoaded = true;
+          this.frontSvgLoading = false;
           this.frontSvgError = false;
           setTimeout(() => this.syncSelectedRegion(), 0);
         },
         error: (err) => {
-          console.error('Failed to load assets/data/male-front-body.svg:', err);
+          console.error(`Failed to load ${targetUrl}:`, err);
           this.frontSvgError = true;
           this.frontSvgLoaded = false;
+          this.frontSvgLoading = false;
+        }
+      });
+  }
+
+  loadBackSvg(): void {
+    const targetUrl = this.isFemale ? 'assets/data/female-back-body.svg' : 'assets/data/male-back-body.svg';
+    if (this.backSvgLoaded && this.currentBackUrl === targetUrl) {
+      return;
+    }
+    this.currentBackUrl = targetUrl;
+    this.backSvgLoading = true;
+    this.backSvgError = false;
+    this.backSvgLoaded = false;
+    this.sanitizedBackSvg = null;
+
+    this.http
+      .get(targetUrl, { responseType: 'text' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (svgText) => {
+          this.sanitizedBackSvg = this.sanitizer.bypassSecurityTrustHtml(svgText);
+          this.backSvgLoaded = true;
+          this.backSvgLoading = false;
+          this.backSvgError = false;
+          setTimeout(() => this.syncSelectedRegion(), 0);
+        },
+        error: (err) => {
+          console.error(`Failed to load ${targetUrl}:`, err);
+          this.backSvgError = true;
+          this.backSvgLoaded = false;
+          this.backSvgLoading = false;
         }
       });
   }
 
   syncSelectedRegion(): void {
-    if (!this.frontSvgContainer?.nativeElement) {
-      return;
-    }
+    const containers = [this.frontSvgContainer, this.backSvgContainer];
+    for (const container of containers) {
+      if (!container?.nativeElement) {
+        continue;
+      }
 
-    const regionElements = this.frontSvgContainer.nativeElement.querySelectorAll('.region');
-    regionElements.forEach((el: Element) => {
-      const regionId = el.getAttribute('data-region-id');
-      const isSelected = !!this.selectedRegionId && regionId === this.selectedRegionId;
-      el.classList.toggle('selected', isSelected);
-      el.setAttribute('aria-pressed', String(isSelected));
-    });
+      const regionElements = container.nativeElement.querySelectorAll('.region');
+      regionElements.forEach((el: Element) => {
+        const regionId = el.getAttribute('data-region-id');
+        const isSelected =
+          !!this.selectedRegionId &&
+          (regionId === this.selectedRegionId ||
+            (this.selectedRegionId === 'rightUpperLegBack' && regionId === 'rightPosteriorThigh') ||
+            (this.selectedRegionId === 'leftUpperLegBack' && regionId === 'leftPosteriorThigh'));
+        el.classList.toggle('selected', isSelected);
+        el.setAttribute('aria-pressed', String(isSelected));
+      });
+    }
   }
 
   onSvgClick(event: MouseEvent): void {
@@ -156,8 +238,12 @@ export class BodyDiagramComponent implements OnInit, OnChanges {
     this.viewChanged.emit(view);
 
     if (view === 'front') {
-      setTimeout(() => this.syncSelectedRegion(), 0);
+      this.loadFrontSvg();
+    } else if (view === 'back') {
+      this.loadBackSvg();
     }
+
+    setTimeout(() => this.syncSelectedRegion(), 0);
   }
 
   selectRegion(regionId: string): void {

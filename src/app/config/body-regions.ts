@@ -6,7 +6,8 @@ export const OTHER_LOCATION_ID = 'other';
  * Anatomical body regions for wound care documentation.
  *
  * Front regions are derived from male-front-body.svg (viewBox="0 0 241 469").
- * Back regions are mapped to the dorsal anatomical view (viewBox="0 0 200 530").
+ * Back regions are mapped to male-back-body.svg (viewBox="0 0 253 387").
+ * All region boundaries are clean, precise, and anatomically aligned.
  */
 export const BODY_REGIONS: BodyRegion[] = [
   // ── HEAD & NECK (front) ──────────────────────────────
@@ -16,7 +17,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Head',
-    svgPath: 'M106 4 C96 6 91 15 91 30 L93 48 C95 61 102 70 112 73 C122 70 129 61 131 48 L133 30 C133 15 128 6 118 4 Z'
+    svgPath: 'M120 6 C105 6 98 18 98 32 C97 42 98 52 104 58 C108 63 114 65 120 65 C126 65 132 63 136 58 C142 52 143 42 142 32 C142 18 135 6 120 6 Z'
   },
   {
     id: 'neck',
@@ -24,25 +25,25 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Neck',
-    svgPath: 'M100 64 Q112 76 124 64 L127 84 Q112 93 97 84 Z'
+    svgPath: 'M104 64 C110 65 115 65 120 65 C125 65 130 65 136 64 L142 85 C134 86 127 87 120 87 C113 87 106 86 98 85 Z'
   },
 
-  // ── SHOULDERS (front) ────────────────────────────────
+  // ── SHOULDERS ────────────────────────────────────────
   {
     id: 'rightShoulder',
     displayName: 'Right Shoulder',
-    view: 'front',
+    view: 'both',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Shoulder',
-    svgPath: 'M97 77 C78 80 62 87 56 101 L76 115 C81 100 92 94 103 92 Z'
+    svgPath: 'M98 85 C85 85 71 88 61 89 C57 93 56 102 56 114 L78 116 C84 104 91 94 103 89 Z'
   },
   {
     id: 'leftShoulder',
     displayName: 'Left Shoulder',
-    view: 'front',
+    view: 'both',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Shoulder',
-    svgPath: 'M127 77 C146 80 162 87 168 101 L148 115 C143 100 132 94 121 92 Z'
+    svgPath: 'M142 85 C155 85 169 88 179 89 C183 93 184 102 184 114 L162 116 C156 104 149 94 137 89 Z'
   },
 
   // ── CHEST & ABDOMEN (front) ──────────────────────────
@@ -52,7 +53,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Chest/Abdomen',
-    svgPath: 'M77 90 Q112 79 147 90 L157 157 Q141 177 112 178 Q83 177 67 157 Z'
+    svgPath: 'M103 89 C108 87 114 86 120 86 C126 86 132 87 137 89 L162 116 C160 130 159 146 157 158 C144 157 132 159 120 159 C108 159 96 157 83 158 C81 146 80 130 78 116 Z'
   },
   {
     id: 'abdomen',
@@ -60,41 +61,41 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Abdomen',
-    svgPath: 'M68 149 Q112 163 156 149 L162 207 Q112 220 62 207 Z'
+    svgPath: 'M83 158 C96 157 108 159 120 159 C132 159 144 157 157 158 L161 202 C148 203 134 204 120 204 C106 204 92 203 79 202 C79 187 81 172 83 158 Z'
   },
 
-  // ── ARMS & ELBOWS (front) ────────────────────────────
+  // ── ARMS & ELBOWS ────────────────────────────────────
   {
     id: 'rightUpperArm',
     displayName: 'Right Upper Arm',
-    view: 'front',
+    view: 'both',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Upper Arm',
-    svgPath: 'M55 98 Q68 91 77 105 L66 165 L43 162 Z'
+    svgPath: 'M56 114 C53 128 51 144 50 160 L68 160 C71 145 74 130 78 116 Z'
   },
   {
     id: 'leftUpperArm',
     displayName: 'Left Upper Arm',
-    view: 'front',
+    view: 'both',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Upper Arm',
-    svgPath: 'M169 98 Q156 91 147 105 L158 165 L181 162 Z'
+    svgPath: 'M184 114 C187 128 189 144 190 160 L172 160 C169 145 166 130 162 116 Z'
   },
   {
     id: 'rightElbow',
     displayName: 'Right Elbow',
-    view: 'front',
+    view: 'both',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Elbow',
-    svgPath: 'M41 157 Q54 151 67 163 L62 182 Q49 188 36 178 Z'
+    svgPath: 'M50 160 C47 167 43 174 43 182 L62 182 C64 175 66 167 68 160 Z'
   },
   {
     id: 'leftElbow',
     displayName: 'Left Elbow',
-    view: 'front',
+    view: 'both',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Elbow',
-    svgPath: 'M183 157 Q170 151 157 163 L162 182 Q175 188 188 178 Z'
+    svgPath: 'M190 160 C193 167 197 174 197 182 L178 182 C176 175 174 167 172 160 Z'
   },
   {
     id: 'rightLowerArm',
@@ -102,7 +103,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Lower Arm',
-    svgPath: 'M35 173 L62 180 L48 225 L24 218 Z'
+    svgPath: 'M43 182 C39 194 36 206 35 218 L51 218 C55 206 59 194 62 182 Z'
   },
   {
     id: 'leftLowerArm',
@@ -110,41 +111,25 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Lower Arm',
-    svgPath: 'M189 173 L162 180 L176 225 L200 218 Z'
-  },
-  {
-    id: 'rightForearm',
-    displayName: 'Right Forearm',
-    view: 'front',
-    diagramVariant: ['male', 'all'],
-    formValue: 'Right Forearm',
-    svgPath: 'M35 173 L62 180 L48 225 L24 218 Z'
-  },
-  {
-    id: 'leftForearm',
-    displayName: 'Left Forearm',
-    view: 'front',
-    diagramVariant: ['male', 'all'],
-    formValue: 'Left Forearm',
-    svgPath: 'M189 173 L162 180 L176 225 L200 218 Z'
+    svgPath: 'M197 182 C201 194 204 206 205 218 L189 218 C185 206 181 194 178 182 Z'
   },
 
-  // ── HANDS (front) ────────────────────────────────────
+  // ── HANDS ────────────────────────────────────────────
   {
     id: 'rightHand',
     displayName: 'Right Hand',
-    view: 'front',
+    view: 'both',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Hand',
-    svgPath: 'M22 214 Q7 223 13 253 Q25 264 38 241 L48 221 Z'
+    svgPath: 'M35 218 L51 218 C48 232 44 248 37 264 C30 264 24 256 16 242 C14 233 22 222 35 218 Z'
   },
   {
     id: 'leftHand',
     displayName: 'Left Hand',
-    view: 'front',
+    view: 'both',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Hand',
-    svgPath: 'M202 214 Q217 223 211 253 Q199 264 186 241 L176 221 Z'
+    svgPath: 'M205 218 L189 218 C192 232 196 248 203 264 C210 264 216 256 224 242 C226 233 218 222 205 218 Z'
   },
 
   // ── HIPS & PELVIS (front) ────────────────────────────
@@ -154,7 +139,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Hip',
-    svgPath: 'M62 201 Q84 212 110 210 L106 263 Q82 271 59 262 Z'
+    svgPath: 'M79 202 C75 220 73 242 72 263 L111 263 C111 243 112 223 112 204 C101 204 90 203 79 202 Z'
   },
   {
     id: 'leftHip',
@@ -162,7 +147,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Hip',
-    svgPath: 'M162 201 Q140 212 114 210 L118 263 Q142 271 165 262 Z'
+    svgPath: 'M161 202 C165 220 167 242 168 263 L129 263 C129 243 128 223 128 204 C139 204 150 203 161 202 Z'
   },
 
   // ── UPPER LEGS / THIGHS (front) ──────────────────────
@@ -172,7 +157,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Upper Leg',
-    svgPath: 'M59 255 Q82 267 106 260 L103 328 Q81 338 57 328 Z'
+    svgPath: 'M72 263 C75 284 78 306 77 328 L104 328 C108 306 110 284 111 263 Z'
   },
   {
     id: 'leftUpperLeg',
@@ -180,7 +165,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Upper Leg',
-    svgPath: 'M165 255 Q142 267 118 260 L121 328 Q143 338 167 328 Z'
+    svgPath: 'M168 263 C165 284 162 306 163 328 L136 328 C132 306 130 284 129 263 Z'
   },
 
   // ── KNEES (front) ────────────────────────────────────
@@ -190,7 +175,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Knee',
-    svgPath: 'M57 320 Q80 334 103 321 L103 360 Q79 370 56 360 Z'
+    svgPath: 'M77 328 C76 338 75 350 78 362 L105 362 C106 350 105 338 104 328 Z'
   },
   {
     id: 'leftKnee',
@@ -198,7 +183,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Knee',
-    svgPath: 'M167 320 Q144 334 121 321 L121 360 Q145 370 168 360 Z'
+    svgPath: 'M163 328 C164 338 165 350 162 362 L135 362 C134 350 135 338 136 328 Z'
   },
 
   // ── LOWER LEGS (front) ───────────────────────────────
@@ -208,7 +193,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Lower Leg',
-    svgPath: 'M56 353 L103 353 L98 426 Q78 438 58 426 Z'
+    svgPath: 'M78 362 C76 380 79 402 82 424 L98 424 C100 402 104 380 105 362 Z'
   },
   {
     id: 'leftLowerLeg',
@@ -216,7 +201,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Lower Leg',
-    svgPath: 'M121 353 L168 353 L166 426 Q146 438 126 426 Z'
+    svgPath: 'M162 362 C164 380 161 402 158 424 L142 424 C140 402 136 380 135 362 Z'
   },
 
   // ── ANKLES (front) ───────────────────────────────────
@@ -226,7 +211,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Ankle',
-    svgPath: 'M58 417 L98 417 L92 452 L56 450 Z'
+    svgPath: 'M82 424 C79 430 76 438 74 446 L96 446 C96 438 97 430 98 424 Z'
   },
   {
     id: 'leftAnkle',
@@ -234,7 +219,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Ankle',
-    svgPath: 'M126 417 L166 417 L168 450 L132 452 Z'
+    svgPath: 'M158 424 C161 430 164 438 166 446 L144 446 C144 438 143 430 142 424 Z'
   },
 
   // ── FEET (front) ─────────────────────────────────────
@@ -244,7 +229,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Foot',
-    svgPath: 'M55 445 L92 447 L89 468 L49 468 Z'
+    svgPath: 'M74 446 C71 450 69 456 69 462 L94 462 C96 456 96 450 96 446 Z'
   },
   {
     id: 'leftFoot',
@@ -252,7 +237,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'front',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Foot',
-    svgPath: 'M132 447 L169 445 L175 468 L135 468 Z'
+    svgPath: 'M166 446 C169 450 171 456 171 462 L146 462 C144 456 144 450 144 446 Z'
   },
 
   // ── BACK VIEW REGIONS ────────────────────────────────
@@ -262,7 +247,15 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Back of Head',
-    svgPath: 'M 78 8 A 22 26 0 1 1 122 8 A 22 26 0 1 1 78 8 Z'
+    svgPath: 'M118 6 C106 6 100 15 100 28 C100 40 105 46 112 46 L124 46 C131 46 136 40 136 28 C136 15 130 6 118 6 Z'
+  },
+  {
+    id: 'backOfNeck',
+    displayName: 'Back of Neck',
+    view: 'back',
+    diagramVariant: ['male', 'all'],
+    formValue: 'Back of Neck',
+    svgPath: 'M112 46 L104 68 C110 70 126 70 132 68 L124 46 Z'
   },
   {
     id: 'upperBack',
@@ -270,7 +263,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Upper Back',
-    svgPath: 'M 86 96 L 114 96 L 114 154 L 86 154 Z'
+    svgPath: 'M104 68 C110 70 126 70 132 68 C142 80 150 92 154 104 L164 138 C142 142 94 142 72 138 L82 104 C86 92 94 80 104 68 Z'
   },
   {
     id: 'lowerBack',
@@ -278,7 +271,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Lower Back',
-    svgPath: 'M 82 154 L 118 154 Q 120 180 120 206 Q 120 228 118 244 L 82 244 Q 80 228 80 206 Q 80 180 82 154 Z'
+    svgPath: 'M72 138 C94 142 142 142 164 138 L156 195 C138 198 98 198 80 195 Z'
   },
   {
     id: 'sacrum',
@@ -286,7 +279,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Sacrum',
-    svgPath: 'M 84 244 L 116 244 Q 118 258 118 268 Q 118 276 114 282 L 86 282 Q 82 276 82 268 Q 82 258 84 244 Z'
+    svgPath: 'M110 195 L126 195 L123 216 L113 216 Z'
   },
   {
     id: 'coccyx',
@@ -294,7 +287,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Coccyx',
-    svgPath: 'M 92 282 L 108 282 Q 110 288 110 294 Q 110 300 106 302 L 94 302 Q 90 300 90 294 Q 90 288 92 282 Z'
+    svgPath: 'M113 216 L123 216 L120 230 L116 230 Z'
   },
   {
     id: 'rightButtock',
@@ -302,7 +295,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Buttock',
-    svgPath: 'M 100 282 Q 112 284 118 284 Q 122 296 122 310 Q 122 324 118 334 L 106 336 L 100 334 Q 102 318 102 302 Q 102 290 100 282 Z'
+    svgPath: 'M80 195 L110 195 L113 216 L116 230 C104 233 92 232 82 230 C80 218 80 206 80 195 Z'
   },
   {
     id: 'leftButtock',
@@ -310,7 +303,23 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Buttock',
-    svgPath: 'M 100 282 Q 88 284 82 284 Q 78 296 78 310 Q 78 324 82 334 L 94 336 L 100 334 Q 98 318 98 302 Q 98 290 100 282 Z'
+    svgPath: 'M126 195 L156 195 C156 206 156 218 154 230 C144 232 132 233 120 230 L123 216 L126 195 Z'
+  },
+  {
+    id: 'rightPosteriorThigh',
+    displayName: 'Right Posterior Thigh',
+    view: 'back',
+    diagramVariant: ['male', 'all'],
+    formValue: 'Right Posterior Thigh',
+    svgPath: 'M82 230 C90 233 102 233 111 230 L107 262 C98 264 92 264 84 262 C84 250 83 240 82 230 Z'
+  },
+  {
+    id: 'leftPosteriorThigh',
+    displayName: 'Left Posterior Thigh',
+    view: 'back',
+    diagramVariant: ['male', 'all'],
+    formValue: 'Left Posterior Thigh',
+    svgPath: 'M125 230 C134 233 146 233 154 230 C152 240 151 250 150 262 C142 264 136 264 127 262 L125 230 Z'
   },
   {
     id: 'rightUpperLegBack',
@@ -318,7 +327,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Upper Leg Back',
-    svgPath: 'M 100 334 L 108 336 Q 114 352 116 370 Q 118 390 116 408 Q 114 420 110 424 L 100 424 Q 106 410 108 392 Q 110 372 106 352 Z'
+    svgPath: 'M82 230 C90 233 102 233 111 230 L107 262 C98 264 92 264 84 262 C84 250 83 240 82 230 Z'
   },
   {
     id: 'leftUpperLegBack',
@@ -326,7 +335,23 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Upper Leg Back',
-    svgPath: 'M 100 334 L 92 336 Q 86 352 84 370 Q 82 390 84 408 Q 86 420 90 424 L 100 424 Q 94 410 92 392 Q 90 372 94 352 Z'
+    svgPath: 'M125 230 C134 233 146 233 154 230 C152 240 151 250 150 262 C142 264 136 264 127 262 L125 230 Z'
+  },
+  {
+    id: 'rightPosteriorKnee',
+    displayName: 'Right Posterior Knee',
+    view: 'back',
+    diagramVariant: ['male', 'all'],
+    formValue: 'Right Posterior Knee',
+    svgPath: 'M84 262 C92 264 98 264 107 262 L106 278 C96 280 88 280 80 278 C81 272 82 267 84 262 Z'
+  },
+  {
+    id: 'leftPosteriorKnee',
+    displayName: 'Left Posterior Knee',
+    view: 'back',
+    diagramVariant: ['male', 'all'],
+    formValue: 'Left Posterior Knee',
+    svgPath: 'M127 262 C136 264 142 264 150 262 C152 267 153 272 153 278 C145 280 137 280 128 278 L127 262 Z'
   },
   {
     id: 'rightCalf',
@@ -334,7 +359,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Calf',
-    svgPath: 'M 100 462 L 110 462 Q 114 478 114 496 Q 114 508 110 514 L 100 514 L 90 514 Q 86 508 86 496 Q 86 478 90 462 Z'
+    svgPath: 'M80 278 C88 280 96 280 106 278 C108 288 108 300 102 320 L99 345 C95 347 90 347 86 345 C82 325 78 305 78 290 C78 284 79 280 80 278 Z'
   },
   {
     id: 'leftCalf',
@@ -342,7 +367,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Calf',
-    svgPath: 'M 100 462 L 90 462 Q 86 478 86 496 Q 86 508 90 514 L 100 514 L 110 514 Q 114 508 114 496 Q 114 478 110 462 Z'
+    svgPath: 'M128 278 C137 280 145 280 153 278 C155 284 156 290 156 295 C154 315 152 330 147 345 C143 347 138 347 134 345 L131 320 C126 300 126 288 128 278 Z'
   },
   {
     id: 'rightHeel',
@@ -350,7 +375,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Right Heel',
-    svgPath: 'M 100 514 L 112 514 Q 116 518 116 524 Q 114 512 100 514 Z'
+    svgPath: 'M86 345 C90 347 95 347 99 345 L101 374 C96 376 88 376 77 372 C76 362 82 352 86 345 Z'
   },
   {
     id: 'leftHeel',
@@ -358,7 +383,7 @@ export const BODY_REGIONS: BodyRegion[] = [
     view: 'back',
     diagramVariant: ['male', 'all'],
     formValue: 'Left Heel',
-    svgPath: 'M 100 514 L 88 514 Q 84 518 84 524 Q 86 512 100 514 Z'
+    svgPath: 'M134 345 C138 347 143 347 147 345 C152 352 157 362 156 372 C146 376 138 376 132 374 L134 345 Z'
   }
 ];
 

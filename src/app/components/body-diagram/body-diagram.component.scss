@@ -40,26 +40,24 @@
   align-items: center;
   justify-content: center;
   min-height: 480px;
- // background: #f9fbfb;
+  background: #ffffff;
   border: 1px solid #dce7e8;
   border-radius: 0.5rem;
   padding: 1rem 0.75rem 0.75rem;
   position: relative;
 }
 
-/* ── Front SVG Container (male-front-body.svg) ───────── */
-.front-svg-container {
+/* ── Front & Back SVG Containers (male-front-body.svg & male-back-body.svg) ── */
+.front-svg-container,
+.back-svg-container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
 
-  ::ng-deep svg {
-    width: min(240px, 100%);
-    height: auto;
-    max-height: 480px;
-    overflow: visible;
-    display: block;
+  ::ng-deep image {
+    pointer-events: none;
+    mix-blend-mode: multiply;
   }
 
   ::ng-deep .region {
@@ -102,6 +100,30 @@
   }
 }
 
+.front-svg-container {
+  ::ng-deep svg {
+    width: min(240px, 100%);
+    height: auto;
+    max-height: 480px;
+    overflow: visible;
+    display: block;
+  }
+}
+
+.back-svg-container {
+  ::ng-deep svg {
+    width: min(308px, 100%);
+    height: auto;
+    max-height: 480px;
+    overflow: visible;
+    display: block;
+  }
+
+  ::ng-deep svg#female-back-body-precise {
+    width: min(240px, 100%);
+  }
+}
+
 /* ── Loading and error states ──────────────────────── */
 .diagram-loading,
 .diagram-error {
@@ -133,48 +155,4 @@
   to {
     transform: rotate(360deg);
   }
-}
-
-/* ── Back SVG sizing ───────────────────────────────── */
-svg {
-  width: min(240px, 100%);
-  height: auto;
-  overflow: visible;
-}
-
-/* ── Static outline style (Back view) ──────────────── */
-.body-silhouette .bp {
-  fill: #fff;
-  stroke: #2d3b42;
-  stroke-width: 1.2;
-  vector-effect: non-scaling-stroke;
-}
-
-/* ── Interactive region overlays (Back view) ───────── */
-.body-region {
-  fill: rgba(200, 230, 232, 0.25);
-  stroke: rgba(45, 59, 66, 0.3);
-  stroke-width: 0.8;
-  cursor: pointer;
-  transition: fill 0.2s ease, stroke 0.2s ease;
-}
-
-.body-region:hover {
-  fill: rgba(13, 154, 171, 0.22);
-  stroke: #0d8d99;
-  stroke-width: 1.2;
-}
-
-.body-region.selected {
-  fill: rgba(13, 154, 171, 0.42);
-  stroke: #0d6977;
-  stroke-width: 1.6;
-  filter: drop-shadow(0 0 3px rgba(13, 154, 171, 0.4));
-}
-
-.body-region:focus-visible {
-  outline: none;
-  stroke: #0d6977;
-  stroke-width: 2;
-  filter: drop-shadow(0 0 4px rgba(13, 154, 171, 0.6));
 }

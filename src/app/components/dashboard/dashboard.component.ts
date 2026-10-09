@@ -80,6 +80,15 @@ export class DashboardComponent {
     this.router.navigate(['/wound-assessment/new-wound-assessment']);
   }
 
+  onViewResident(wound: Wound): void {
+    this.router.navigate(['/view-resident'], {
+      queryParams: {
+        resident: wound.resident,
+        room: wound.room
+      }
+    });
+  }
+
   showToast(message: string): void {
     this.toast.set(message);
     setTimeout(() => this.toast.set(''), 2600);

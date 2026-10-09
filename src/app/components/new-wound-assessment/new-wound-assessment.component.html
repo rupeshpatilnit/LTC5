@@ -6,8 +6,9 @@
     <div class="resident-picker">
       <label for="resident-select">Resident</label>
       <select id="resident-select" [formControl]="form.controls.residentId">
-        <option value="R-1001">Smith, Robert (105-B)</option>
-        <option value="R-1002">Johnson, Clara (202-A)</option>
+        <option value="R-1001">Hunt, Ethan (101-A)</option>
+        <option value="R-1002">Johnson, Clara (118-B)</option>
+        <option value="R-1005">Holmes, Sherlock (105-B)</option>
       </select>
     </div>
   </header>
@@ -20,26 +21,19 @@
 
     <div class="assessment-layout">
       <section class="diagram-panel">
-        <app-body-diagram
-          [diagramVariant]="[form.get('diagramVariant')?.value ?? 'male']"
+        <app-body-diagram [diagramVariant]="[form.get('diagramVariant')?.value ?? 'male']"
           [selectedRegionId]="form.get('woundLocationId')?.value ?? null"
-          [activeView]="form.get('bodyView')?.value ?? 'front'"
-          (regionSelected)="onRegionSelected($event)"
-          (viewChanged)="onViewChanged($event)"
-          (selectionCleared)="clearSelection()"
-        ></app-body-diagram>
+          [activeView]="form.get('bodyView')?.value ?? 'front'" (regionSelected)="onRegionSelected($event)"
+          (viewChanged)="onViewChanged($event)" (selectionCleared)="clearSelection()"></app-body-diagram>
       </section>
 
       <section class="location-panel">
-        <app-wound-location-selector
-          [selectedRegionId]="form.get('woundLocationId')?.value ?? null"
+        <app-wound-location-selector [selectedRegionId]="form.get('woundLocationId')?.value ?? null"
           [bodyView]="form.get('bodyView')?.value ?? 'front'"
           [diagramVariant]="[form.get('diagramVariant')?.value ?? 'male']"
-          [customLocation]="form.get('woundLocation')?.value ?? ''"
-          (locationSelected)="onLocationSelected($event)"
+          [customLocation]="form.get('woundLocation')?.value ?? ''" (locationSelected)="onLocationSelected($event)"
           (customLocationChange)="onCustomLocationChanged($event)"
-          (clearSelection)="clearSelection()"
-        ></app-wound-location-selector>
+          (clearSelection)="clearSelection()"></app-wound-location-selector>
 
         <div class="location-error" *ngIf="formSubmitted && locationErrorMessage">
           {{ locationErrorMessage }}
