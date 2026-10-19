@@ -1,0 +1,516 @@
+<div class="wound-details-page" *ngIf="wound && resident">
+  <!-- ═════════════════════════════════════════════════════════════
+       BREADCRUMB BAR
+       ═════════════════════════════════════════════════════════════ -->
+  <nav class="breadcrumb-bar" aria-label="Breadcrumb">
+    <a class="crumb-link" (click)="goToDashboard()">Dashboard</a>
+    <span class="crumb-separator">/</span>
+    <a class="crumb-link" (click)="goToResident()">{{ resident.name }}</a>
+    <span class="crumb-separator">/</span>
+    <span class="crumb-current">{{ wound.id }}</span>
+  </nav>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       HEADER HERO SECTION
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="wound-hero-card">
+    <div class="hero-top-row">
+      <div class="hero-info-left">
+        <div class="title-badge-row">
+          <h1 class="wound-main-title">{{ wound.id }} {{ wound.location }}</h1>
+          <span class="badge-status" [ngClass]="'status-' + wound.status.toLowerCase()">
+            {{ wound.status }}
+          </span>
+          <span class="badge-origin">
+            {{ wound.origin === 'Present on Admission' ? 'POA' : wound.origin }}
+          </span>
+        </div>
+        <p class="wound-sub-info">
+          {{ resident.name }} · Room {{ resident.room }} · {{ wound.type }} · {{ wound.stage }}
+        </p>
+      </div>
+
+      <div class="hero-actions-right">
+        <button type="button" class="btn-action-back" (click)="goToResident()">
+          Back
+        </button>
+        <button type="button" class="btn-action-new" (click)="goToNewAssessment()">
+          New Assessment
+        </button>
+      </div>
+    </div>
+
+    <!-- Metadata Grid Row -->
+    <div class="hero-meta-row">
+      <div class="meta-col">
+        <span class="meta-label">ONSET DATE</span>
+        <span class="meta-value">{{ wound.onsetDate }}</span>
+      </div>
+      <div class="meta-col">
+        <span class="meta-label">LAST ASSESSMENT</span>
+        <span class="meta-value">{{ wound.lastAssessment }}</span>
+      </div>
+      <div class="meta-col">
+        <span class="meta-label">NEXT DUE</span>
+        <span class="meta-value">{{ wound.nextDue }}</span>
+      </div>
+      <div class="meta-col">
+        <span class="meta-label">TREATMENT</span>
+        <span class="meta-value">{{ wound.treatment || 'BID dressing change' }}</span>
+      </div>
+      <div class="meta-col">
+        <span class="meta-label">DRAINAGE</span>
+        <span class="meta-value">{{ wound.drainage || 'Serous, minimal' }}</span>
+      </div>
+      <div class="meta-col">
+        <span class="meta-label">ASSESSMENTS</span>
+        <span class="meta-value">{{ wound.assessmentHistory?.length || wound.photoCount || 5 }} total</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       MAIN TWO-COLUMN WORKSPACE
+       ═════════════════════════════════════════════════════════════ -->
+  <div class="workspace-grid">
+    <!-- ───────────────────────────────────────────────────────────
+         LEFT COLUMN (Measurements, PUSH Trend, Linked Orders)
+         ─────────────────────────────────────────────────────────── -->
+    <aside class="left-workspace-column">
+      <!-- 1. Current Measurements -->
+      <section class="panel-card">
+        <h2 class="panel-heading">Current Measurements</h2>
+        <div class="measurements-grid">
+          <div class="measure-box">
+            <span class="measure-number">{{ parsedMeasurements.length }}</span>
+            <span class="measure-unit">cm</span>
+            <span class="measure-label">Length</span>
+          </div>
+          <div class="measure-box">
+            <span class="measure-number">{{ parsedMeasurements.width }}</span>
+            <span class="measure-unit">cm</span>
+            <span class="measure-label">Width</span>
+          </div>
+          <div class="measure-box">
+            <span class="measure-number">{{ parsedMeasurements.depth }}</span>
+            <span class="measure-unit">cm</span>
+            <span class="measure-label">Depth</span>
+          </div>
+        </div>
+
+        <div class="composition-block">
+          <span class="composition-title">WOUND BED COMPOSITION</span>
+          <div class="composition-stacked-bar">
+            <div
+              class="bar-segment gran"
+              [style.width.%]="wound.granulation || 75"
+              [title]="'Granulation: ' + (wound.granulation || 75) + '%'"
+            >
+              <span class="seg-text" *ngIf="(wound.granulation || 75) >= 15">{{ wound.granulation || 75 }}%</span>
+            </div>
+            <div
+              class="bar-segment slough"
+              [style.width.%]="wound.slough || 15"
+              [title]="'Slough: ' + (wound.slough || 15) + '%'"
+            >
+              <span class="seg-text" *ngIf="(wound.slough || 15) >= 10">{{ wound.slough || 15 }}%</span>
+            </div>
+            <div
+              class="bar-segment necrotic"
+              [style.width.%]="wound.necrotic || 10"
+              [title]="'Necrotic: ' + (wound.necrotic || 10) + '%'"
+            >
+              <span class="seg-text" *ngIf="(wound.necrotic || 10) >= 10">{{ wound.necrotic || 10 }}%</span>
+            </div>
+          </div>
+          <div class="composition-legend">
+            <div class="legend-item">
+              <span class="dot gran-dot"></span>
+              <span>Granulation</span>
+            </div>
+            <div class="legend-item">
+              <span class="dot slough-dot"></span>
+              <span>Slough</span>
+            </div>
+            <div class="legend-item">
+              <span class="dot necrotic-dot"></span>
+              <span>Necrotic</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. PUSH Score Trend -->
+      <section class="panel-card">
+        <h2 class="panel-heading">PUSH Score Trend</h2>
+        <div class="push-card-content">
+          <div class="push-current-stat">
+            <span class="push-hero-num">{{ wound.currentPushScore }}</span>
+            <span class="push-hero-label">Current</span>
+          </div>
+
+          <div class="push-chart-bars">
+            <div class="chart-column" *ngFor="let pt of wound.pushTrend">
+              <span class="col-val">{{ pt.score }}</span>
+              <div class="col-track">
+                <div class="col-fill" [style.height.%]="getPushBarHeight(pt.score)"></div>
+              </div>
+              <span class="col-label">{{ pt.week.replace('Week ', 'Wk ') }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="push-range-footer">
+          Range: 0 - 17 (Lower is better)
+        </div>
+      </section>
+
+      <!-- 3. Linked Physician Orders -->
+      <section class="panel-card">
+        <div class="panel-heading-row">
+          <h2 class="panel-heading">
+            Linked Physician Orders ({{ wound.detailedOrders?.length || wound.linkedOrders.length || 2 }})
+          </h2>
+          <button type="button" class="btn-mini-action" (click)="openLinkOrder()">
+            + Link Order
+          </button>
+        </div>
+
+        <div class="orders-list-block">
+          <div class="order-detail-card" *ngFor="let ord of wound.detailedOrders">
+            <div class="order-badge-row">
+              <span class="order-code-tag">{{ ord.code }}</span>
+              <span class="order-category-tag">{{ ord.category }}</span>
+              <span class="order-status-tag">{{ ord.status }}</span>
+            </div>
+            <p class="order-desc-text">{{ ord.description }}</p>
+          </div>
+
+          <!-- Fallback if detailedOrders not present -->
+          <ng-container *ngIf="!wound.detailedOrders || !wound.detailedOrders.length">
+            <div class="order-detail-card" *ngFor="let ord of wound.linkedOrders; let i = index">
+              <div class="order-badge-row">
+                <span class="order-code-tag">{{ 'ORDER-' + (100 + i) }}</span>
+                <span class="order-category-tag">WOUND CARE</span>
+                <span class="order-status-tag">Active</span>
+              </div>
+              <p class="order-desc-text">{{ ord }}</p>
+            </div>
+          </ng-container>
+        </div>
+      </section>
+    </aside>
+
+    <!-- ───────────────────────────────────────────────────────────
+         RIGHT COLUMN (Photos, Comparison, History, Notes)
+         ─────────────────────────────────────────────────────────── -->
+    <main class="right-workspace-column">
+      <!-- 1. Photo Timeline Section -->
+      <section class="panel-card">
+        <div class="panel-heading-row">
+          <h2 class="panel-heading">Photo Timeline ({{ wound.photos?.length || wound.photoCount || 5 }})</h2>
+          <button
+            type="button"
+            class="btn-compare-toggle"
+            [class.active]="isComparingPhotos"
+            (click)="toggleComparePhotos()"
+          >
+            {{ isComparingPhotos ? 'Exit Comparison' : 'Compare Photos' }}
+          </button>
+        </div>
+
+        <!-- Horizontal Photo Cards Strip -->
+        <div class="photo-cards-strip">
+          <div
+            class="timeline-photo-card"
+            *ngFor="let p of wound.photos"
+            [class.selected]="isPhotoSelected(p.id)"
+            (click)="selectPhotoForComparison(p)"
+            tabindex="0"
+            role="button"
+            [title]="'Select ' + p.date + ' photo to compare'"
+          >
+            <div class="photo-thumbnail-box">
+              <img
+                *ngIf="p.imageUrl && !p.imageFailed"
+                [src]="p.imageUrl"
+                [alt]="'Wound photo - ' + p.date"
+                class="timeline-photo-img"
+                (error)="p.imageFailed = true"
+              />
+              <div class="camera-icon-badge" *ngIf="!p.imageUrl || p.imageFailed">
+                <span class="camera-symbol">📷</span>
+                <span class="sparkle-dot">✦</span>
+              </div>
+            </div>
+            <div class="photo-card-info">
+              <span class="photo-card-date">{{ p.date }}</span>
+              <span class="photo-card-user">{{ p.user }}</span>
+              <span class="photo-card-dim">{{ p.size }} · Score: {{ p.score }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side-by-Side Comparison Container (Screenshots 3 & 4) -->
+        <div class="comparison-container" *ngIf="isComparingPhotos">
+          <div class="comparison-header-row">
+            <h3 class="comparison-title">Side-by-Side Comparison</h3>
+            <button type="button" class="btn-comparison-close" (click)="closeComparison()">
+              Close
+            </button>
+          </div>
+
+          <div class="comparison-views-row">
+            <!-- Left Photo View -->
+            <div class="comparison-photo-frame">
+              <div class="comparison-display-box">
+                <img
+                  *ngIf="selectedPhotoLeft?.imageUrl && !selectedPhotoLeft?.imageFailed"
+                  [src]="selectedPhotoLeft?.imageUrl"
+                  [alt]="'Wound photo - ' + selectedPhotoLeft?.date"
+                  class="comparison-img"
+                  (error)="selectedPhotoLeft && (selectedPhotoLeft.imageFailed = true)"
+                />
+                <div class="camera-large-icon" *ngIf="!selectedPhotoLeft?.imageUrl || selectedPhotoLeft?.imageFailed">
+                  <span class="camera-symbol">📷</span>
+                </div>
+              </div>
+              <div class="comparison-photo-meta">
+                <span class="comp-date">{{ selectedPhotoLeft?.date }}</span>
+                <span class="comp-sub">{{ selectedPhotoLeft?.size }} · Score: {{ selectedPhotoLeft?.score }}</span>
+              </div>
+            </div>
+
+            <!-- Middle Direction Arrow -->
+            <div class="comparison-arrow-divider">
+              <span>→</span>
+            </div>
+
+            <!-- Right Photo View -->
+            <div class="comparison-photo-frame">
+              <div class="comparison-display-box highlight">
+                <img
+                  *ngIf="selectedPhotoRight?.imageUrl && !selectedPhotoRight?.imageFailed"
+                  [src]="selectedPhotoRight?.imageUrl"
+                  [alt]="'Wound photo - ' + selectedPhotoRight?.date"
+                  class="comparison-img"
+                  (error)="selectedPhotoRight && (selectedPhotoRight.imageFailed = true)"
+                />
+                <div class="camera-large-icon" *ngIf="!selectedPhotoRight?.imageUrl || selectedPhotoRight?.imageFailed">
+                  <span class="camera-symbol">📷</span>
+                  <span class="sparkle-dot large">✦</span>
+                </div>
+              </div>
+              <div class="comparison-photo-meta">
+                <span class="comp-date">{{ selectedPhotoRight?.date }}</span>
+                <span class="comp-sub">{{ selectedPhotoRight?.size }} · Score: {{ selectedPhotoRight?.score }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Changes Metrics Summary Box -->
+          <div class="comparison-metrics-box">
+            <span class="metrics-title">
+              Changes ({{ selectedPhotoLeft?.date }} to {{ selectedPhotoRight?.date }})
+            </span>
+            <div class="metrics-grid">
+              <div class="metric-row">
+                <span class="metric-key">Size</span>
+                <span class="metric-val text-green">{{ comparisonAreaChange }}</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-key">Score</span>
+                <span class="metric-val text-green">{{ comparisonScoreChange }}</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-key">Days between</span>
+                <span class="metric-val">28 days</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drag & Drop Upload Zone -->
+        <div class="upload-dropzone" (click)="fileInput.click()">
+          <input
+            #fileInput
+            type="file"
+            accept="image/png, image/jpeg"
+            style="display: none"
+            (change)="onPhotoUpload($event)"
+          />
+          <div class="upload-icon-wrapper">
+            <span class="camera-symbol-lg">📷</span>
+          </div>
+          <span class="upload-primary-text">Click to upload or drag and drop</span>
+          <span class="upload-secondary-text">
+            JPG, PNG up to 10MB. Camera capture supported on tablet.
+          </span>
+        </div>
+      </section>
+
+      <!-- 2. Assessment History Table Section -->
+      <section class="panel-card">
+        <h2 class="panel-heading">
+          Assessment History ({{ wound.assessmentHistory?.length || 5 }})
+        </h2>
+        <div class="table-responsive-wrapper">
+          <table class="assessment-history-table">
+            <thead>
+              <tr>
+                <th>DATE</th>
+                <th>SIZE (L X W X D)</th>
+                <th>SCORE</th>
+                <th>STATUS</th>
+                <th>CHANGE</th>
+                <th>USER</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ah of wound.assessmentHistory">
+                <td class="font-medium">{{ ah.date }}</td>
+                <td class="font-mono">{{ ah.size }}</td>
+                <td>{{ ah.score }}</td>
+                <td>
+                  <span class="table-status-pill" [ngClass]="'status-' + ah.status.toLowerCase()">
+                    {{ ah.status }}
+                  </span>
+                </td>
+                <td [class.text-green]="ah.change && ah.change.startsWith('-')" [class.text-red]="ah.change && ah.change.startsWith('+')">
+                  {{ ah.change }}
+                </td>
+                <td class="text-secondary">{{ ah.user }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3. Progress Notes Section (Screenshot 5) -->
+      <section class="panel-card">
+        <div class="panel-heading-row">
+          <h2 class="panel-heading">
+            Progress Notes ({{ wound.progressNotes.length || 6 }})
+          </h2>
+          <button type="button" class="btn-mini-action" (click)="openAddNote()">
+            + Add Note
+          </button>
+        </div>
+
+        <div class="progress-notes-timeline">
+          <div class="timeline-note-card" *ngFor="let n of wound.progressNotes">
+            <div class="note-left-bar">
+              <span class="timeline-dot" [ngClass]="'dot-' + (n.category || 'ASSESSMENT').toLowerCase()"></span>
+            </div>
+            <div class="note-main-content">
+              <div class="note-meta-header">
+                <div class="author-timestamp">
+                  <span class="note-date">{{ n.date }}</span>
+                  <strong class="note-author">{{ n.author }}</strong>
+                </div>
+                <span class="note-category-badge" [ngClass]="'badge-' + (n.category || 'ASSESSMENT').toLowerCase()">
+                  {{ n.category || 'ASSESSMENT' }}
+                </span>
+              </div>
+              <p class="note-text-body">{{ n.note }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       MODAL: ADD PROGRESS NOTE
+       ═════════════════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" *ngIf="isAddNoteOpen" (click)="closeAddNote()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h3 class="modal-title">Add Progress Note</h3>
+        <button type="button" class="modal-close" (click)="closeAddNote()">✕</button>
+      </header>
+      <div class="modal-body">
+        <p class="modal-subtitle">
+          Wound: <strong>{{ wound.id }} — {{ wound.location }}</strong>
+        </p>
+
+        <div class="form-group mb-3">
+          <label for="noteCategory" class="form-label">Note Category</label>
+          <select id="noteCategory" class="form-select" [(ngModel)]="newNoteCategory">
+            <option value="ASSESSMENT">ASSESSMENT</option>
+            <option value="TREATMENT">TREATMENT</option>
+            <option value="COMMUNICATION">COMMUNICATION</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="newNote" class="form-label">Note Content</label>
+          <textarea
+            id="newNote"
+            rows="4"
+            class="form-textarea"
+            [(ngModel)]="newNoteText"
+            placeholder="Enter clinical observations, wound bed granulation, exudate, and dressing change details..."
+          ></textarea>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-modal-cancel" (click)="closeAddNote()">Cancel</button>
+        <button
+          type="button"
+          class="btn-modal-submit"
+          (click)="saveNote()"
+          [disabled]="!newNoteText.trim()"
+        >
+          Save Progress Note
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       MODAL: LINK PHYSICIAN ORDER
+       ═════════════════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" *ngIf="isLinkOrderOpen" (click)="closeLinkOrder()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h3 class="modal-title">Link Physician Order</h3>
+        <button type="button" class="modal-close" (click)="closeLinkOrder()">✕</button>
+      </header>
+      <div class="modal-body">
+        <div class="form-group mb-3">
+          <label for="orderCat" class="form-label">Category</label>
+          <select id="orderCat" class="form-select" [(ngModel)]="newOrderCategory">
+            <option value="WOUND CARE">WOUND CARE</option>
+            <option value="NUTRITION">NUTRITION</option>
+            <option value="POSITIONING">POSITIONING</option>
+            <option value="SUPPORT SURFACE">SUPPORT SURFACE</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="orderDetailText" class="form-label">Order Details</label>
+          <textarea
+            id="orderDetailText"
+            rows="3"
+            class="form-textarea"
+            [(ngModel)]="newOrderText"
+            placeholder="e.g. Pressure ulcer care - Sacrum - BID dressing change with hydrocolloid"
+          ></textarea>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-modal-cancel" (click)="closeLinkOrder()">Cancel</button>
+        <button
+          type="button"
+          class="btn-modal-submit"
+          (click)="saveOrder()"
+          [disabled]="!newOrderText.trim()"
+        >
+          Link Order
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-popup" *ngIf="toastMessage">{{ toastMessage }}</div>
+</div>

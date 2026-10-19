@@ -110,52 +110,68 @@
         *ngFor="let w of resident.activeWounds"
         [ngClass]="'status-border-' + w.status.toLowerCase()"
       >
-        <!-- Card Header -->
-        <div class="wound-card-header">
-          <div class="wound-title-row">
-            <span class="wound-code">{{ w.id }}</span>
-            <h3 class="wound-location">{{ w.location }}</h3>
-            <span class="wound-type-stage">{{ w.type }} · {{ w.stage }}</span>
+        <!-- Clickable Wound Summary Area (Navigates to /wound-details) -->
+        <div
+          class="wound-card-clickable"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'View wound details for ' + w.id + ' ' + w.location"
+          (click)="goToWoundDetails(w)"
+          (keydown.enter)="goToWoundDetails(w)"
+          (keydown.space)="goToWoundDetails(w); $event.preventDefault()"
+          title="Click to view wound details for {{ w.id }}"
+        >
+          <!-- Card Header -->
+          <div class="wound-card-header">
+            <div class="wound-title-row">
+              <span class="wound-code">{{ w.id }}</span>
+              <h3 class="wound-location">{{ w.location }}</h3>
+              <span class="wound-type-stage">{{ w.type }} · {{ w.stage }}</span>
+            </div>
+            <div class="view-details-indicator">
+              <span class="indicator-text">View Details</span>
+              <span class="indicator-chevron">→</span>
+            </div>
           </div>
-        </div>
 
-        <!-- Details Grid (2 Columns) -->
-        <div class="wound-details-grid">
-          <div class="col-left">
-            <div class="field-group">
-              <span class="field-label">Status</span>
-              <div>
-                <span class="status-pill" [ngClass]="'pill-' + w.status.toLowerCase()">
-                  {{ w.status }}
-                </span>
+          <!-- Details Grid (2 Columns) -->
+          <div class="wound-details-grid">
+            <div class="col-left">
+              <div class="field-group">
+                <span class="field-label">Status</span>
+                <div>
+                  <span class="status-pill" [ngClass]="'pill-' + w.status.toLowerCase()">
+                    {{ w.status }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <span class="field-label">Last Assessment</span>
+                <span class="field-val">{{ w.lastAssessment }}</span>
+              </div>
+
+              <div class="field-group">
+                <span class="field-label">Size (L×W×D cm)</span>
+                <span class="field-val font-mono">{{ w.size }}</span>
               </div>
             </div>
 
-            <div class="field-group">
-              <span class="field-label">Last Assessment</span>
-              <span class="field-val">{{ w.lastAssessment }}</span>
-            </div>
+            <div class="col-right">
+              <div class="field-group">
+                <span class="field-label">Onset Date</span>
+                <span class="field-val">{{ w.onsetDate }}</span>
+              </div>
 
-            <div class="field-group">
-              <span class="field-label">Size (L×W×D cm)</span>
-              <span class="field-val font-mono">{{ w.size }}</span>
-            </div>
-          </div>
+              <div class="field-group">
+                <span class="field-label">Next Due</span>
+                <span class="field-val">{{ w.nextDue }}</span>
+              </div>
 
-          <div class="col-right">
-            <div class="field-group">
-              <span class="field-label">Onset Date</span>
-              <span class="field-val">{{ w.onsetDate }}</span>
-            </div>
-
-            <div class="field-group">
-              <span class="field-label">Next Due</span>
-              <span class="field-val">{{ w.nextDue }}</span>
-            </div>
-
-            <div class="field-group">
-              <span class="field-label">Origin</span>
-              <span class="field-val">{{ w.origin }}</span>
+              <div class="field-group">
+                <span class="field-label">Origin</span>
+                <span class="field-val">{{ w.origin }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -268,35 +284,51 @@
         class="wound-card status-border-resolved"
         *ngFor="let rw of resident.resolvedWounds"
       >
-        <div class="wound-card-header">
-          <div class="wound-title-row">
-            <span class="wound-code">{{ rw.id }}</span>
-            <h3 class="wound-location">{{ rw.location }}</h3>
-            <span class="wound-type-stage">{{ rw.type }} · {{ rw.stage }}</span>
+        <!-- Clickable Wound Summary Area (Navigates to /wound-details) -->
+        <div
+          class="wound-card-clickable"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'View wound details for ' + rw.id + ' ' + rw.location"
+          (click)="goToWoundDetails(rw)"
+          (keydown.enter)="goToWoundDetails(rw)"
+          (keydown.space)="goToWoundDetails(rw); $event.preventDefault()"
+          title="Click to view details for {{ rw.id }}"
+        >
+          <div class="wound-card-header">
+            <div class="wound-title-row">
+              <span class="wound-code">{{ rw.id }}</span>
+              <h3 class="wound-location">{{ rw.location }}</h3>
+              <span class="wound-type-stage">{{ rw.type }} · {{ rw.stage }}</span>
+            </div>
+            <div class="view-details-indicator">
+              <span class="indicator-text">View Details</span>
+              <span class="indicator-chevron">→</span>
+            </div>
           </div>
-        </div>
 
-        <div class="wound-details-grid">
-          <div class="col-left">
-            <div class="field-group">
-              <span class="field-label">Status</span>
-              <div>
-                <span class="status-pill pill-resolved">Resolved</span>
+          <div class="wound-details-grid">
+            <div class="col-left">
+              <div class="field-group">
+                <span class="field-label">Status</span>
+                <div>
+                  <span class="status-pill pill-resolved">Resolved</span>
+                </div>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Resolved Date</span>
+                <span class="field-val font-semibold text-green-700">{{ rw.resolvedDate }}</span>
               </div>
             </div>
-            <div class="field-group">
-              <span class="field-label">Resolved Date</span>
-              <span class="field-val font-semibold text-green-700">{{ rw.resolvedDate }}</span>
-            </div>
-          </div>
-          <div class="col-right">
-            <div class="field-group">
-              <span class="field-label">Days to Closure</span>
-              <span class="field-val font-semibold">{{ rw.daysToClosure }} days</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Origin</span>
-              <span class="field-val">{{ rw.origin }}</span>
+            <div class="col-right">
+              <div class="field-group">
+                <span class="field-label">Days to Closure</span>
+                <span class="field-val font-semibold">{{ rw.daysToClosure }} days</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Origin</span>
+                <span class="field-val">{{ rw.origin }}</span>
+              </div>
             </div>
           </div>
         </div>

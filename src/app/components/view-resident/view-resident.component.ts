@@ -127,6 +127,18 @@ export class ViewResidentComponent implements OnInit {
     this.router.navigate(['/wound-assessment/dashboard']);
   }
 
+  goToWoundDetails(wound: ResidentWoundDetail): void {
+    const queryParams: Record<string, string> = {
+      id: wound.id,
+      woundId: wound.id
+    };
+    if (this.resident) {
+      queryParams['resident'] = this.resident.name;
+      queryParams['residentId'] = this.resident.id;
+    }
+    this.router.navigate(['/wound-details'], { queryParams });
+  }
+
   goToNewAssessment(wound?: ResidentWoundDetail): void {
     const queryParams: Record<string, string> = {};
     if (this.resident) {
