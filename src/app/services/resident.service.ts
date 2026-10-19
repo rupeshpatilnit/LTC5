@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { ResidentProfile } from '../models/resident-profile.model';
+import { PushScoreTrend, ResidentProfile, ResidentWoundDetail } from '../models/resident-profile.model';
 
 @Injectable({ providedIn: 'root' })
 export class ResidentService {
@@ -48,23 +48,80 @@ export class ResidentService {
             'Pressure ulcer care - Sacrum - BID dressing change with hydrocolloid',
             'High protein supplement TID with meals'
           ],
+          treatment: 'BID dressing change',
+          drainage: 'Serous, minimal',
+          granulation: 75,
+          slough: 15,
+          necrotic: 10,
+          detailedOrders: [
+            {
+              code: 'WOUNDCARE-001',
+              category: 'WOUND CARE',
+              status: 'Active',
+              description: 'Pressure ulcer care - Sacrum - BID dressing change with hydrocolloid'
+            },
+            {
+              code: 'NUTRITION-003',
+              category: 'NUTRITION',
+              status: 'Active',
+              description: 'High protein supplement TID with meals'
+            }
+          ],
+          photos: [
+            { id: 'P-1', date: 'Jun 21, 2024', user: 'Jane Smith, RN', size: '3.2 × 2.1 cm', score: 8, imageUrl: 'assets/wound-images/W-2026-002_1.webp' },
+            { id: 'P-2', date: 'Jun 14, 2024', user: 'Jane Smith, RN', size: '3.5 × 2.3 cm', score: 9, imageUrl: 'assets/wound-images/W-2026-002_2.avif' },
+            { id: 'P-3', date: 'Jun 7, 2024', user: 'Jane Smith, RN', size: '3.8 × 2.5 cm', score: 10, imageUrl: 'assets/wound-images/W-2026-002_3.jpeg' },
+            { id: 'P-4', date: 'May 31, 2024', user: 'Dr. Chen', size: '4.0 × 2.6 cm', score: 12, imageUrl: 'assets/wound-images/W-2026-002_4.jpeg' },
+            { id: 'P-5', date: 'May 24, 2024', user: 'Jane Smith, RN', size: '3.5 × 2.4 cm', score: 14, imageUrl: 'assets/wound-images/W-2026-002_5.jpeg' }
+          ],
+          assessmentHistory: [
+            { id: 'AH-1', date: 'Jun 21, 2024', size: '3.2 × 2.1 × 0.8', score: 8, status: 'Improving', change: '-1', user: 'Jane Smith, RN' },
+            { id: 'AH-2', date: 'Jun 14, 2024', size: '3.5 × 2.3 × 0.9', score: 9, status: 'Improving', change: '-1', user: 'Jane Smith, RN' },
+            { id: 'AH-3', date: 'Jun 7, 2024', size: '3.8 × 2.5 × 1.0', score: 10, status: 'Unchanged', change: '-2', user: 'Jane Smith, RN' },
+            { id: 'AH-4', date: 'May 31, 2024', size: '4.0 × 2.6 × 1.0', score: 12, status: 'Worsening', change: '-2', user: 'Dr. Chen' },
+            { id: 'AH-5', date: 'May 24, 2024', size: '3.5 × 2.4 × 0.9', score: 14, status: 'Worsening', change: '—', user: 'Jane Smith, RN' }
+          ],
           progressNotes: [
             {
               id: 'N-1',
-              date: 'Jun 21, 2024',
-              author: 'Nurse Sarah Jenkins, RN',
-              note: 'Granulation tissue increased to 70%. Wound bed pink and healthy with decreasing slough. Periwound skin intact without maceration. Cleansed with sterile saline and fresh hydrocolloid dressing applied.'
+              date: 'Jun 21, 2024 14:45',
+              author: 'Jane Smith, RN',
+              category: 'ASSESSMENT',
+              note: 'Weekly assessment completed. Wound bed 80% granulation, edges approximating. PUSH score improved from 9 to 8. Continue current treatment plan. Resident reports decreased pain at wound site.'
             },
             {
               id: 'N-2',
-              date: 'Jun 14, 2024',
-              author: 'Nurse Robert Chen, RN',
-              note: 'Moderate serosanguinous exudate noted. No foul odor. Depth measured at 0.9 cm. Patient tolerated dressing change well without discomfort.'
+              date: 'Jun 19, 2024 08:15',
+              author: 'Maria Lopez, LPN',
+              category: 'TREATMENT',
+              note: 'Dressing change performed per order. Wound irrigated with normal saline, packed with calcium alginate, covered with foam dressing. Moderate serous drainage noted on removed dressing. No odor present.'
             },
             {
               id: 'N-3',
-              date: 'Jun 07, 2024',
+              date: 'Jun 17, 2024 16:30',
+              author: 'Jane Smith, RN',
+              category: 'COMMUNICATION',
+              note: 'Called Dr. Chen regarding wound improvement trend. Verbal order received to decrease dressing changes from BID to daily. New order entered and verified.'
+            },
+            {
+              id: 'N-4',
+              date: 'Jun 14, 2024 10:15',
+              author: 'Jane Smith, RN',
+              category: 'ASSESSMENT',
+              note: 'Wound bed measured at 3.5 x 2.3 x 0.9 cm. PUSH score 9. Slough decreasing, mild serosanguinous drainage.'
+            },
+            {
+              id: 'N-5',
+              date: 'Jun 12, 2024 09:00',
+              author: 'Maria Lopez, LPN',
+              category: 'TREATMENT',
+              note: 'BID hydrocolloid dressing changed per order. Periwound skin intact.'
+            },
+            {
+              id: 'N-6',
+              date: 'Jun 07, 2024 11:30',
               author: 'Dr. Emily Vance, MD',
+              category: 'ASSESSMENT',
               note: 'Wound bed showing positive response to current treatment protocol. Continue BID hydrocolloid changes and nutritional supplementation.'
             }
           ],
@@ -736,6 +793,140 @@ export class ResidentService {
     const res = this.residents.find((r) => r.id === residentId);
     if (!res || !res.physicianOrders) return of(false);
     res.physicianOrders.splice(orderIndex, 1);
+    return of(true);
+  }
+
+  getWoundDetailsById(
+    woundId: string,
+    residentId?: string
+  ): Observable<{ resident: ResidentProfile; wound: ResidentWoundDetail } | null> {
+    const targetWoundId = (woundId || '').trim();
+    const normalizedId = targetWoundId.toUpperCase() === 'W-2024-002' ? 'W-2026-002' : targetWoundId;
+
+    let matchedResident: ResidentProfile | undefined;
+    let matchedWound: ResidentWoundDetail | undefined;
+
+    // 1. If residentId provided, search that resident first
+    if (residentId) {
+      const res = this.residents.find(
+        (r) => r.id.toLowerCase() === residentId.toLowerCase() || r.name.toLowerCase().includes(residentId.toLowerCase())
+      );
+      if (res) {
+        matchedWound =
+          res.activeWounds.find((w) => w.id.toLowerCase() === normalizedId.toLowerCase()) ||
+          res.resolvedWounds.find((w) => w.id.toLowerCase() === normalizedId.toLowerCase());
+        if (matchedWound) {
+          matchedResident = res;
+        }
+      }
+    }
+
+    // 2. Search all residents for wound by ID
+    if (!matchedWound) {
+      for (const res of this.residents) {
+        const found =
+          res.activeWounds.find((w) => w.id.toLowerCase() === normalizedId.toLowerCase()) ||
+          res.resolvedWounds.find((w) => w.id.toLowerCase() === normalizedId.toLowerCase());
+        if (found) {
+          matchedWound = found;
+          matchedResident = res;
+          break;
+        }
+      }
+    }
+
+    // 3. Fallback: if not found, use Holmes, Sherlock and wound W-2026-002
+    if (!matchedWound || !matchedResident) {
+      matchedResident = this.residents[0];
+      matchedWound = matchedResident.activeWounds[0];
+    }
+
+    // Ensure wound has complete defaults for rich details display
+    this.ensureWoundDefaults(matchedWound);
+
+    return of({ resident: matchedResident, wound: matchedWound });
+  }
+
+  private ensureWoundDefaults(w: ResidentWoundDetail): void {
+    if (!w.treatment) {
+      w.treatment = w.linkedOrders?.[0]
+        ? w.linkedOrders[0].split('-').pop()?.trim() || 'BID dressing change'
+        : 'BID dressing change';
+    }
+    if (!w.drainage) {
+      w.drainage = 'Serous, minimal';
+    }
+    if (w.granulation === undefined) {
+      w.granulation = w.status === 'Improving' ? 75 : w.status === 'Worsening' ? 40 : 60;
+    }
+    if (w.slough === undefined) {
+      w.slough = w.status === 'Improving' ? 15 : w.status === 'Worsening' ? 35 : 25;
+    }
+    if (w.necrotic === undefined) {
+      w.necrotic = Math.max(0, 100 - (w.granulation || 0) - (w.slough || 0));
+    }
+    if (!w.detailedOrders || !w.detailedOrders.length) {
+      w.detailedOrders = (w.linkedOrders || []).map((ord: string, idx: number) => ({
+        code: `ORDER-${100 + idx}`,
+        category: ord.toLowerCase().includes('protein') || ord.toLowerCase().includes('nutrition') ? 'NUTRITION' : 'WOUND CARE',
+        status: 'Active',
+        description: ord
+      }));
+      if (!w.detailedOrders.length) {
+        w.detailedOrders = [
+          {
+            code: 'WOUNDCARE-001',
+            category: 'WOUND CARE',
+            status: 'Active',
+            description: `${w.location} care - BID dressing change per protocol`
+          }
+        ];
+      }
+    }
+    if (!w.photos || !w.photos.length) {
+      const dates = [w.lastAssessment, 'Jun 14, 2024', 'Jun 07, 2024', 'May 31, 2024', w.onsetDate];
+      w.photos = (w.pushTrend || []).map((pt: PushScoreTrend, idx: number) => ({
+        id: `P-${idx + 1}`,
+        date: dates[idx] || `Week ${idx + 1}`,
+        user: idx === 3 ? 'Dr. Chen' : 'Jane Smith, RN',
+        size: idx === 0 ? w.size : `${(3.2 + idx * 0.2).toFixed(1)} × ${(2.1 + idx * 0.1).toFixed(1)} cm`,
+        score: pt.score
+      }));
+    }
+    if (!w.assessmentHistory || !w.assessmentHistory.length) {
+      const dates = [w.lastAssessment, 'Jun 14, 2024', 'Jun 07, 2024', 'May 31, 2024', w.onsetDate];
+      w.assessmentHistory = (w.pushTrend || []).map((pt: PushScoreTrend, idx: number) => ({
+        id: `AH-${idx + 1}`,
+        date: dates[idx] || `Week ${idx + 1}`,
+        size: idx === 0 ? w.size : `${(3.2 + idx * 0.2).toFixed(1)} × ${(2.1 + idx * 0.1).toFixed(1)} × 0.9`,
+        score: pt.score,
+        status: idx === 0 ? w.status : idx < 2 ? 'Improving' : idx === 2 ? 'Unchanged' : 'Worsening',
+        change: idx === 4 ? '—' : idx < 2 ? '-1' : '-2',
+        user: idx === 3 ? 'Dr. Chen' : 'Jane Smith, RN'
+      }));
+    }
+  }
+
+  addWoundDetailedOrder(
+    residentId: string,
+    woundId: string,
+    order: { category: string; description: string }
+  ): Observable<boolean> {
+    const res = this.residents.find((r) => r.id === residentId);
+    if (!res) return of(false);
+    const wound =
+      res.activeWounds.find((w) => w.id === woundId) ||
+      res.resolvedWounds.find((w) => w.id === woundId);
+    if (!wound) return of(false);
+    if (!wound.detailedOrders) wound.detailedOrders = [];
+    const newCode = `${order.category.substring(0, 5).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`;
+    wound.detailedOrders.push({
+      code: newCode,
+      category: order.category,
+      status: 'Active',
+      description: order.description
+    });
+    wound.linkedOrders.push(order.description);
     return of(true);
   }
 }

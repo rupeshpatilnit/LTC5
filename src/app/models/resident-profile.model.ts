@@ -8,6 +8,34 @@ export interface ProgressNote {
   date: string;
   author: string;
   note: string;
+  category?: 'ASSESSMENT' | 'TREATMENT' | 'COMMUNICATION';
+}
+
+export interface AssessmentRecord {
+  id: string;
+  date: string;
+  size: string;
+  score: number;
+  status: 'Improving' | 'Unchanged' | 'Worsening' | 'New' | 'Resolved';
+  change?: string;
+  user: string;
+}
+
+export interface PhotoRecord {
+  id: string;
+  date: string;
+  user: string;
+  size: string;
+  score: number;
+  imageUrl?: string;
+  imageFailed?: boolean;
+}
+
+export interface DetailedPhysicianOrder {
+  code: string;
+  category: string;
+  status: 'Active' | 'Discontinued' | 'Completed';
+  description: string;
 }
 
 export interface ResidentWoundDetail {
@@ -25,10 +53,18 @@ export interface ResidentWoundDetail {
   currentPushScore: number;
   pushTrendDescription: string; // "Improving", "Stable", "Worsening", "New"
   linkedOrders: string[];
+  detailedOrders?: DetailedPhysicianOrder[];
   progressNotes: ProgressNote[];
   photoCount: number;
   resolvedDate?: string;
   daysToClosure?: number;
+  treatment?: string;
+  drainage?: string;
+  granulation?: number;
+  slough?: number;
+  necrotic?: number;
+  assessmentHistory?: AssessmentRecord[];
+  photos?: PhotoRecord[];
 }
 
 export interface PhysicianOrder {
